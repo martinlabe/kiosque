@@ -41,7 +41,7 @@ class YggNewspaperInterface:
         self.__username, self.__password = Utils.get_credentials(self.options["credentials"])
 
         Utils.random_sleep()
-        self.scrapper = self.get_scrapper()
+        self.scraper = self.get_scraper()
 
         Utils.random_sleep()
         self.__sign_in()
@@ -53,7 +53,7 @@ class YggNewspaperInterface:
         Raises:
             Exception: if the login failed.
         """
-        if self.scrapper.login(self.__username, self.__password):
+        if self.scraper.login(self.__username, self.__password):
             if self.verbose:
                 print("### login successfully to YggTorrent.")
         else:
@@ -87,7 +87,7 @@ class YggNewspaperInterface:
         file.close()
 
     @staticmethod
-    def get_scrapper():
+    def get_scraper():
         """Return a configured scraper object."""
         session = requests.session()
         return YggTorrentScraper(session)
@@ -190,7 +190,7 @@ class YggNewspaperInterface:
 
         # download the magnet
         Utils.random_sleep()
-        self.scrapper.download_from_torrent_url(url, self.options["magnet"], filename)
+        self.scraper.download_from_torrent_url(url, self.options["magnet"], filename)
         self.add_in_history(url)
 
         # download the torrent
@@ -209,7 +209,7 @@ class YggNewspaperInterface:
         if self.verbose:
             print(f"### requesting {media}")
 
-        research = self.scrapper.search({
+        research = self.scraper.search({
             "name": self.get_request_for(media),
             "sort": "publish_date",
             "order": "desc",
@@ -220,7 +220,7 @@ class YggNewspaperInterface:
         limit = 9  # the maximum number of torrent to try before giving up
         for i in range(limit):
             Utils.random_sleep()
-            infos = self.scrapper.extract_details(research[i])
+            infos = self.scraper.extract_details(research[i])
             print(f"#### {infos.name}")
 
             if self.is_in_history(research[i]):
@@ -240,4 +240,4 @@ class YggNewspaperInterface:
 
             if i + 1 == limit:
                 if self.verbose:
-                    print(f"##### an error seems to have occur for {media} scrapping")
+                    print(f"##### an error seems to have occur for {media} scraping")
