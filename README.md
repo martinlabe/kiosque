@@ -1,6 +1,6 @@
 # Kiosque
 
- A program scrapping YggTorrent to download the newspapers every day.
+ A program scraping YggTorrent to download the newspapers every day.
  
 ## Environment
 
