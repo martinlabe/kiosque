@@ -1,4 +1,4 @@
-# Kioque
+# Kiosque
 
  A program scrapping YggTorrent to download the newspapers every day.
  
