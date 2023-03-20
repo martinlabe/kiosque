@@ -28,6 +28,7 @@ if __name__ == '__main__':
         "history": "downloads.txt",
         "credentials": "credentials.txt",
         "library": "/home/martin/Data/kiosque/Kiosque/",
+        "yggtorrent_tld": "lol",
     }
 
     # configure the connection to Ygg

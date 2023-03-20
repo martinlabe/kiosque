@@ -1,9 +1,11 @@
+import os
+import glob
 import requests
 import re
 import dateparser
 import datetime
 import qbittorrent
-from yggtorrentscraper import YggTorrentScraper
+from yggtorrentscraper import YggTorrentScraper, set_yggtorrent_tld
 
 from .Utils import Utils
 
@@ -20,6 +22,8 @@ DEFAULT_OPTIONS = {
     "qbittorrent_server": "http://127.0.0.1:8080/",
     "qbittorrent_username": "admin",
     "qbittorrent_password": "adminadmin",
+    # yggtorrentscraper options
+    "yggtorrent_tld": "lol",
 }
 
 
@@ -86,11 +90,12 @@ class YggNewspaperInterface:
         file.write(url + "\n")
         file.close()
 
-    @staticmethod
-    def get_scraper():
+    def get_scraper(self):
         """Return a configured scraper object."""
         session = requests.session()
-        return YggTorrentScraper(session)
+        set_yggtorrent_tld(self.options["yggtorrent_tld"])
+        scraper = YggTorrentScraper(session)
+        return scraper
 
     @staticmethod
     def print_torrent(infos):
@@ -139,7 +144,7 @@ class YggNewspaperInterface:
             res = re.search("[0-9]+[ \w]*20[0-9]{2}", name)
             return dateparser.parse(res[0], languages=["fr", "en"]) - datetime.timedelta(days=6)
         if media == "Le Canard Enchaîné":
-            res = re.search("[0-9]+.*20[0-9]{2}", name)
+            res = re.search(" [0-9]+.*20[0-9]{2}", name)
             return dateparser.parse(res[0], languages=["fr", "en"])
         if media == "Le Monde":
             s = name[len("Le Monde du "):-len(" Pdf")]
@@ -190,7 +195,11 @@ class YggNewspaperInterface:
 
         # download the magnet
         Utils.random_sleep()
-        self.scraper.download_from_torrent_url(url, self.options["magnet"], filename)
+        self.scraper.download_from_torrent_url(url, self.options["magnet"])
+        # renaming the torrent file
+        list_of_files = glob.glob(self.options["magnet"] + '*')
+        latest_file = max(list_of_files, key=os.path.getctime)
+        os.rename(latest_file, self.options["magnet"] + filename)
         self.add_in_history(url)
 
         # download the torrent
@@ -217,7 +226,7 @@ class YggNewspaperInterface:
             "sub_category": "2156"
         })
 
-        limit = 9  # the maximum number of torrent to try before giving up
+        limit = 10  # the maximum number of torrent to try before giving up
         for i in range(limit):
             Utils.random_sleep()
             infos = self.scraper.extract_details(research[i])

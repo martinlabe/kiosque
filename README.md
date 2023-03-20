@@ -20,8 +20,21 @@ The dependencies are:
 
 Also, you need to have [qBittorrent](https://www.qbittorrent.org/) installed on your computer.
 
+## Configuration
+
+First you need to activate the server in QBittorrent.
+Go in Tools > Preferences > Web UI and activate the Web User Interface (Remote control).
+You can change the Username and the Password to access this server.
+The credentials should be passed to the YggNewspaperInterface through the options dictionary.
+By default, it is "qbittorrent_username": "admin" and "qbittorrent_password": "adminadmin".
 
 ## Usage
+
+```shell
+./kiosque.sh
+```
+
+or launch QBittorrent and directly execute  the main file :
 
 ```python
 python main.py [--test]
